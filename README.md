@@ -53,7 +53,6 @@ Pre-trained models are available in the `models/` directory. Load and evaluate u
 - **PharmHGT**: Novel pharmacophore-aware heterogeneous graph transformer for surfactant analysis
 - **Cross-Validation**: Robust model evaluation with stratified cross-validation
 - **Early Stopping**: Prevents overfitting during training
-- **Hyperparameter Optimization**: Systematic optimization of model parameters
 
 ## Requirements
 
