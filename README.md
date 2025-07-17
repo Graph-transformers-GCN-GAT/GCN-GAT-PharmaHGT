@@ -33,7 +33,7 @@ Welcome to this repository! It encompasses code, test dataset and resources for 
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/GCN-GAT-PHARMAHGT.git
+git clone https://github.com/Graph-transformers-GCN-GAT/GCN-GAT-PharmaHGT.git
 cd GCN-GAT-PHARMAHGT
 ```
 
