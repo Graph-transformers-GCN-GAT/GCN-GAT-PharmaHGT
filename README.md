@@ -91,7 +91,3 @@ If you find this work useful in your research, please cite:
   note = {Manuscript in preparation}
 }
 ```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
