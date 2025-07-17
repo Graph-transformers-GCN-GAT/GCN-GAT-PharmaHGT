@@ -1,6 +1,6 @@
 # Harnessing Graph Learning for Surfactant Chemistry: PharmHGT, GCN, and GAT in LogCMC Prediction
 
-Welcome to this repository! It encompasses code, test dataset and resources for graph neural network-based machine learning approaches to predict the logarithm of Critical Micelle Concentration (LogCMC) in surfactant chemistry.
+Welcome to this repository! It encompasses code, dataset and resources for graph neural network-based machine learning approaches to predict the logarithm of Critical Micelle Concentration (LogCMC) in surfactant chemistry.
 
 
 ## Directory Structure
