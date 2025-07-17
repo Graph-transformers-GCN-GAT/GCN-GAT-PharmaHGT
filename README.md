@@ -58,7 +58,7 @@ Pre-trained models are available in the `models/` directory. Load and evaluate u
 
 See `requirements.txt` for detailed package dependencies. Key requirements include:
 - PyTorch
-- PyTorch Geometric
+- DGL
 - RDKit
 - NumPy
 - Pandas
