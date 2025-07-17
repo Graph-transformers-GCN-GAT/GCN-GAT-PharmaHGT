@@ -1,0 +1,2 @@
+Model,Data,Hidden Dim,Learning Rate,Batch Size,MSE (Train),MSE (Test),R^2 (Train),R^2 (Test),MAE (Train),MAE (Test),Standard Deviation (Train),Standard Deviation (Test)
+GCN,data2,512,0.0021,32,0.027310293,0.18178676,0.9822948926594399,0.9066839337468754,0.08275456,0.3072894,0.16080493,0.40727386

@@ -1,0 +1,2 @@
+Model,Data,Hidden Dim,Learning Rate,Batch Size,MSE (Train),MSE (Test),R^2 (Train),R^2 (Test),MAE (Train),MAE (Test),Standard Deviation (Train),Standard Deviation (Test)
+GAT,data1,256,0.0019,32,0.0747321,0.31365377,0.9547772635355596,0.8453325408578722,0.15801196,0.3690472,0.26915586,0.5337422
