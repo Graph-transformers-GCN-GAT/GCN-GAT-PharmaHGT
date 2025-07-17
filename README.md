@@ -42,19 +42,6 @@ cd GCN-GAT-PHARMAHGT
 pip install -r requirements.txt
 ```
 
-## Usage
-
-### Training Models
-
-**For GCN/GAT models:**
-```python
-python src/GCN-GAT/GNN_workflow.py
-```
-
-**For PharmHGT models:**
-```python
-python src/PharmHGT/train.py
-```
 
 ### Model Evaluation
 
