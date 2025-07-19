@@ -1,0 +1,35 @@
+{
+  "data": {
+    "path": "..\\data\\surfactant_data1/split_70_20_10",
+    "batch_size": 32,
+    "target_names": [
+      "logCMC"
+    ],
+    "task": "regression"
+  },
+  "train": {
+    "epochs": 300,
+    "device": "cuda",
+    "save_path": "../models/surfactant_model_data1_newSplit70_20_10_plot_opt_R6/",
+    "warmup": 5,
+    "init_lr": 1.0211623586834216e-05,
+    "max_lr": 0.00010043650440633205,
+    "final_lr": 1.9858088837184888e-05,
+    "num_fold": 1,
+    "batch_size": 80
+  },
+  "model": {
+    "hid_dim": 384,
+    "atom_dim": 55,
+    "bond_dim": 14,
+    "pharm_dim": 194,
+    "reac_dim": 34,
+    "depth": 5,
+    "act": "relu",
+    "num_task": 1,
+    "dropout": 0.11190130761241533
+  },
+  "seed": [
+    42
+  ]
+}
