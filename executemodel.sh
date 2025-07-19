@@ -4,4 +4,4 @@ python ./src/GCN-GAT/GNN_workflow.py --gpu 0 --train --randSplit --path './model
 
 #PharmaHGT model training script
 
-python train.py surfactant_data2_plot.json
+python train.py best_conf_data2_R2.json
