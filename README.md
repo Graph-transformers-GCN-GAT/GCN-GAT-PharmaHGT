@@ -69,7 +69,7 @@ See `requirements.txt` for detailed package dependencies. Key requirements inclu
 If you find this work useful in your research, please cite:
 
 ```bibtex
-@article{marchan2024harnessing,
+@article{marchan2025harnessing,
   author = {G. Theis Marchan and T. O. Balogun and K. Territo and D. Das and T. Olayiwola and R. Kumar and J. A. Romagnoli},
   title = {Harnessing Graph Learning for Surfactant Chemistry: PharmHGT, GCN, and GAT in LogCMC Prediction},
   journal = {Submitted to Digital Discovery},
