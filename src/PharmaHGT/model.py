@@ -23,6 +23,9 @@ def reverse_edge(tensor):
         if n == 0:
             return tensor  # Empty tensor, nothing to reverse
         
+        # if n % 2 != 0:
+        #     print(f"Warning: Tensor length {n} is not even, returning original tensor")
+        #     return tensor
         if n % 2 != 0:
             print(f"Warning: Tensor length {n} is not even, returning original tensor")
             return tensor
@@ -39,9 +42,15 @@ def reverse_edge(tensor):
         print(f"Error in reverse_edge: {e}")
         return tensor
 
-def del_reverse_message(edge,field):
-    """for g.apply_edges"""
-    return {'m': edge.src[field]-edge.data['rev_h']}
+# def del_reverse_message(edge,field):
+#     """for g.apply_edges"""
+#     return {'m': edge.src[field]-edge.data['rev_h']}
+def del_reverse_message(edge, field):
+    """for g.apply_edges - with safety check for empty edges"""
+    if edge.src[field].size(0) == 0 or edge.data['rev_h'].size(0) == 0:
+        # Return empty tensor with correct shape if no edges
+        return {'m': edge.src[field]}
+    return {'m': edge.src[field] - edge.data['rev_h']}
 
 def add_attn(node,field,attn):
         feat = node.data[field].unsqueeze(1)
@@ -102,7 +111,7 @@ class Node_GRU(nn.Module):
             self.direction = 2
         else:
             self.direction = 1
-        self.att_mix = MultiHeadedAttention(6,hid_dim)
+        self.att_mix = MultiHeadedAttention(4,hid_dim) #original in 6 # changed to 4
         self.gru  = nn.GRU(hid_dim, hid_dim, batch_first=True, 
                            bidirectional=bidirectional)
     
@@ -206,31 +215,62 @@ class MVMP(nn.Module):
         for ntype in self.node_types:
             if ntype != 'junc':
                 bg.apply_nodes(self.init_node,ntype=ntype)
+        
         for etype in self.homo_etypes:
-            bg.apply_edges(self.init_edge,etype=etype)
+            # bg.apply_edges(self.init_edge,etype=etype)
+            if bg.num_edges(etype) > 0:
+                bg.apply_edges(self.init_edge, etype=etype)
 
         if 'j' in self.view:
             bg.nodes['a'].data[f'f_junc_{suffix}'] = bg.nodes['a'].data['f_junc'].clone()
             bg.nodes['p'].data[f'f_junc_{suffix}'] = bg.nodes['p'].data['f_junc'].clone()
 
-        update_funcs = {e:(fn.copy_e('h','m'),partial(self.msg_func, attn=self.attn[''.join(e)], field=f'f_{suffix}')) for e in self.homo_etypes }
-        update_funcs.update({e:(fn.copy_src(f'f_junc_{suffix}','m'),partial(self.msg_func, attn=self.attn[''.join(e)], field=f'f_junc_{suffix}')) for e in self.hetero_etypes})
+        # update_funcs = {e:(fn.copy_e('h','m'),partial(self.msg_func, attn=self.attn[''.join(e)], field=f'f_{suffix}')) for e in self.homo_etypes }
+        # update_funcs.update({e:(fn.copy_src(f'f_junc_{suffix}','m'),partial(self.msg_func, attn=self.attn[''.join(e)], field=f'f_junc_{suffix}')) for e in self.hetero_etypes})
+        update_funcs = {}
+        # Only add update functions for edge types that have edges
+        for e in self.homo_etypes:
+            if bg.num_edges(e) > 0:
+                update_funcs[e] = (fn.copy_e('h','m'), partial(self.msg_func, attn=self.attn[''.join(e)], field=f'f_{suffix}'))
+    
+        for e in self.hetero_etypes:
+            if bg.num_edges(e) > 0:
+                update_funcs[e] = (fn.copy_src(f'f_junc_{suffix}','m'), partial(self.msg_func, attn=self.attn[''.join(e)], field=f'f_junc_{suffix}'))
+
+        
         # message passing
         for i in range(self.depth-1):
-            bg.multi_update_all(update_funcs,cross_reducer='sum')
-            for edge_type in self.homo_etypes:
-                bg.edges[edge_type].data['rev_h']=reverse_edge(bg.edges[edge_type].data['h'])
-                bg.apply_edges(partial(del_reverse_message,field=f'f_{suffix}'),etype=edge_type)
-                bg.apply_edges(partial(self.update_edge,layer=self.mp_list[''.join(edge_type)][i]), etype=edge_type)
+            # bg.multi_update_all(update_funcs,cross_reducer='sum')
+            if update_funcs:  # Only if there are valid edge types
+                bg.multi_update_all(update_funcs, cross_reducer='sum')
 
-        # last update of node feature
-        update_funcs = {e:(fn.copy_e('h','mail'),partial(self.update_node,field=f'f_{suffix}',layer=self.node_last_layer[e[0]])) for e in self.homo_etypes}
-        bg.multi_update_all(update_funcs,cross_reducer='sum')
+            for edge_type in self.homo_etypes:
+                if bg.num_edges(edge_type) > 0:  # Check if edges exist
+                    bg.edges[edge_type].data['rev_h']=reverse_edge(bg.edges[edge_type].data['h'])
+                    bg.apply_edges(partial(del_reverse_message,field=f'f_{suffix}'),etype=edge_type)
+                    bg.apply_edges(partial(self.update_edge,layer=self.mp_list[''.join(edge_type)][i]), etype=edge_type)
+
+        # last update of node feature - only for edge types with edges
+        final_update_funcs = {}
+        # update_funcs = {e:(fn.copy_e('h','mail'),partial(self.update_node,field=f'f_{suffix}',layer=self.node_last_layer[e[0]])) for e in self.homo_etypes}
+        for e in self.homo_etypes:
+            if bg.num_edges(e) > 0:
+                final_update_funcs[e] = (fn.copy_e('h','mail'), partial(self.update_node, field=f'f_{suffix}', layer=self.node_last_layer[e[0]]))
+
+        if final_update_funcs:
+            bg.multi_update_all(update_funcs,cross_reducer='sum')
 
         # last update of junc feature
-        bg.multi_update_all({e:(fn.copy_src(f'f_junc_{suffix}','mail'),
-                                 partial(self.update_node,field=f'f_junc_{suffix}',layer=self.node_last_layer['junc'])) for e in self.hetero_etypes},
-                                 cross_reducer='sum')
+        junc_update_funcs = {}
+        # bg.multi_update_all({e:(fn.copy_src(f'f_junc_{suffix}','mail'),
+                                #  partial(self.update_node,field=f'f_junc_{suffix}',layer=self.node_last_layer['junc'])) for e in self.hetero_etypes},
+                                #  cross_reducer='sum')
+        for e in self.hetero_etypes:
+            if bg.num_edges(e) > 0:
+                junc_update_funcs[e] = (fn.copy_src(f'f_junc_{suffix}','mail'), partial(self.update_node, field=f'f_junc_{suffix}', layer=self.node_last_layer['junc']))
+        
+        if junc_update_funcs:
+            bg.multi_update_all(junc_update_funcs, cross_reducer='sum')
 
 class PharmHGT(nn.Module):
     def __init__(self,args):
@@ -263,11 +303,13 @@ class PharmHGT(nn.Module):
 
         ## predict
         self.out = nn.Sequential(nn.Linear(4*hid_dim,hid_dim),
+                                # nn.LayerNorm(hid_dim), # Added LayerNorm
                                  self.act,
-                                 nn.Dropout(0.2),
+                                 nn.Dropout(0.4), # Increased from 0.2
                                  nn.Linear(hid_dim,hid_dim//2),
+                                #  nn.LayerNorm(hid_dim // 2), # Added LayerNorm
                                  self.act,
-                                 nn.Dropout(0.1),
+                                 nn.Dropout(0.3), # Increased from 0.1
                                  nn.Linear(hid_dim//2,1)
                                 )
 
