@@ -15,8 +15,8 @@ Welcome to this repository! It encompasses code, dataset and resources for graph
   - `GCN_early_stop_skipCV_split70_20_10_data2_best_opt2`: GCN model with optimized hyperparameters (Dataset 2)
 
 - **PharmHGT Models:**
-  - `surfactant_model_data1_newSplit70_20_10_plot_opt_R4`: PharmHGT model for surfactant prediction (Dataset 1)
-  - `surfactant_model_data2_Split70_20_10_plot_best_R2`: PharmHGT model for surfactant prediction (Dataset 2)
+  - `surfactant_model_data1_newSplit70_20_10_plot_opt_R7`: PharmHGT model for surfactant prediction (Dataset 1)
+  - `surfactant_model_data2_Split70_20_10_plot_best_R9`: PharmHGT model for surfactant prediction (Dataset 2)
 
 ### Source Code
 - **GCN-GAT:**
@@ -70,7 +70,7 @@ If you find this work useful in your research, please cite:
 
 ```bibtex
 @article{marchan2024harnessing,
-  author = {G. Theis Marchan and T. Olayiwola and K. Territo and T. O. Balogun and R. Kumar and J. A. Romagnoli},
+  author = {G. Theis Marchan and T. O. Balogun and K. Territo and D. Das and T. Olayiwola and R. Kumar and J. A. Romagnoli},
   title = {Harnessing Graph Learning for Surfactant Chemistry: PharmHGT, GCN, and GAT in LogCMC Prediction},
   journal = {Submitted to Digital Discovery},
   year = {2024},
