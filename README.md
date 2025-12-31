@@ -1,4 +1,4 @@
-# Harnessing Graph Learning for Surfactant Chemistry: PharmHGT, GCN, and GAT in LogCMC Prediction
+# Towards Harnessing AI for Surfactant Chemistry: Prediction of Critical Micelle Concentration
 
 Welcome to this repository! It encompasses code, dataset and resources for graph neural network-based machine learning approaches to predict the logarithm of Critical Micelle Concentration (LogCMC) in surfactant chemistry.
 
@@ -71,9 +71,9 @@ If you find this work useful in your research, please cite:
 ```bibtex
 @article{marchan2025harnessing,
   author = {G. Theis Marchan and T. O. Balogun and K. Territo and D. Das and T. Olayiwola and R. Kumar and J. A. Romagnoli},
-  title = {Harnessing Graph Learning for Surfactant Chemistry: PharmHGT, GCN, and GAT in LogCMC Prediction},
-  journal = {Submitted to Digital Discovery},
-  year = {2024},
+  title = {Towards Harnessing AI for Surfactant Chemistry: Prediction of Critical Micelle Concentration},
+  journal = {Submitted to Computational Materials Science},
+  year = {2025},
   note = {Manuscript in preparation}
 }
 ```
